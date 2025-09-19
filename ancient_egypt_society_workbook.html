@@ -12,170 +12,349 @@
         }
 
         body {
-            font-family: 'Georgia', serif;
+            font-family: 'Arial', sans-serif;
             background: linear-gradient(135deg, #ffd89b 0%, #e4a853 50%, #d4af37 100%);
             min-height: 100vh;
             color: #2c1810;
+            touch-action: manipulation;
         }
 
-        .workbook-container {
-            max-width: 1200px;
+        .app-container {
+            max-width: 100%;
             margin: 0 auto;
-            padding: 20px;
+            background: white;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
         }
 
         .header {
-            text-align: center;
             background: linear-gradient(45deg, #8b4513, #cd853f);
-            color: #fff;
-            padding: 40px 20px;
-            border-radius: 20px;
-            margin-bottom: 30px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            color: white;
+            padding: 20px;
+            text-align: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
         }
 
         .header h1 {
-            font-size: 2.5rem;
+            font-size: 1.5rem;
             margin-bottom: 10px;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
         }
 
-        .header p {
-            font-size: 1.2rem;
-            opacity: 0.9;
+        .progress-container {
+            background: rgba(255,255,255,0.2);
+            height: 8px;
+            border-radius: 4px;
+            overflow: hidden;
         }
 
-        .section {
-            background: rgba(255, 255, 255, 0.95);
-            margin: 20px 0;
-            padding: 30px;
-            border-radius: 15px;
-            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
-            border-left: 5px solid #d4af37;
+        .progress-bar {
+            background: #ffd700;
+            height: 100%;
+            width: 0%;
+            transition: width 0.5s ease;
         }
 
-        .section h2 {
+        .tab-navigation {
+            display: flex;
+            background: #f8f8f8;
+            border-bottom: 2px solid #d4af37;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .tab-btn {
+            flex: 1;
+            min-width: 120px;
+            padding: 15px 10px;
+            background: none;
+            border: none;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+            border-bottom: 3px solid transparent;
+        }
+
+        .tab-btn.active {
+            background: white;
+            border-bottom-color: #d4af37;
+            color: #8b4513;
+            font-weight: bold;
+        }
+
+        .tab-content {
+            flex: 1;
+            padding: 20px;
+            display: none;
+            overflow-y: auto;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .section-title {
+            font-size: 1.4rem;
             color: #8b4513;
             margin-bottom: 20px;
-            font-size: 1.8rem;
-            border-bottom: 2px solid #d4af37;
-            padding-bottom: 10px;
+            text-align: center;
         }
 
-        .key-terms {
+        /* Флэш-карты */
+        .flashcards-container {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 15px;
+            grid-template-columns: 1fr;
+            gap: 20px;
+            max-width: 400px;
+            margin: 0 auto;
+        }
+
+        .flashcard {
+            perspective: 1000px;
+            height: 200px;
+            cursor: pointer;
+        }
+
+        .flashcard-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            text-align: center;
+            transition: transform 0.6s;
+            transform-style: preserve-3d;
+        }
+
+        .flashcard.flipped .flashcard-inner {
+            transform: rotateY(180deg);
+        }
+
+        .flashcard-front, .flashcard-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            padding: 20px;
+        }
+
+        .flashcard-front {
+            background: linear-gradient(135deg, #d4af37, #ffd700);
+            color: #2c1810;
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+
+        .flashcard-back {
+            background: linear-gradient(135deg, #8b4513, #cd853f);
+            color: white;
+            transform: rotateY(180deg);
+            font-size: 1rem;
+            line-height: 1.4;
+        }
+
+        /* Drag & Drop игра */
+        .matching-game {
             margin: 20px 0;
         }
 
-        .term-card {
+        .terms-container, .definitions-container {
+            margin: 15px 0;
+        }
+
+        .game-title {
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #8b4513;
+        }
+
+        .draggable-item {
             background: #f9f5e7;
             padding: 15px;
+            margin: 8px 0;
             border-radius: 10px;
-            border-left: 4px solid #d4af37;
-            cursor: pointer;
+            border: 2px solid #d4af37;
+            cursor: grab;
+            transition: all 0.3s ease;
+            user-select: none;
+            touch-action: none;
+        }
+
+        .draggable-item:active {
+            cursor: grabbing;
+        }
+
+        .draggable-item.dragging {
+            opacity: 0.5;
+            transform: scale(1.05);
+        }
+
+        .drop-zone {
+            background: #e8f5e8;
+            border: 2px dashed #28a745;
+            padding: 15px;
+            margin: 8px 0;
+            border-radius: 10px;
+            min-height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             transition: all 0.3s ease;
         }
 
-        .term-card:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-            background: #f5f0d8;
+        .drop-zone.drag-over {
+            background: #d4edda;
+            transform: scale(1.02);
         }
 
-        .term-card h4 {
-            color: #8b4513;
-            margin-bottom: 8px;
+        .drop-zone.filled {
+            background: #d1ecf1;
+            border-color: #17a2b8;
         }
 
-        .pyramid-container {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            margin: 40px 0;
-            position: relative;
-            height: 500px;
+        .drop-zone.correct {
+            background: #d4edda;
+            border-color: #28a745;
         }
 
-        .pyramid {
-            position: relative;
-            width: 400px;
-            height: 400px;
+        .drop-zone.incorrect {
+            background: #f8d7da;
+            border-color: #dc3545;
+        }
+
+        /* Интерактивная пирамида */
+        .pyramid-interactive {
+            margin: 20px 0;
+            text-align: center;
         }
 
         .pyramid-level {
-            position: absolute;
-            left: 50%;
-            transform: translateX(-50%);
             background: linear-gradient(45deg, #d4af37, #ffd700);
-            border: 2px solid #8b4513;
+            margin: 5px auto;
+            padding: 15px;
+            border-radius: 10px;
             cursor: pointer;
             transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
+            border: 2px solid #8b4513;
             font-weight: bold;
-            color: #2c1810;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            position: relative;
         }
+
+        .pyramid-level:nth-child(1) { width: 80%; }
+        .pyramid-level:nth-child(2) { width: 85%; }
+        .pyramid-level:nth-child(3) { width: 90%; }
+        .pyramid-level:nth-child(4) { width: 95%; }
+        .pyramid-level:nth-child(5) { width: 100%; }
 
         .pyramid-level:hover {
-            transform: translateX(-50%) scale(1.05);
-            box-shadow: 0 6px 15px rgba(0,0,0,0.3);
+            transform: scale(1.02);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
         }
 
-        .level-1 { top: 0; width: 80px; height: 60px; border-radius: 8px; }
-        .level-2 { top: 80px; width: 120px; height: 60px; border-radius: 8px; }
-        .level-3 { top: 160px; width: 180px; height: 60px; border-radius: 8px; }
-        .level-4 { top: 240px; width: 280px; height: 80px; border-radius: 8px; }
-        .level-5 { top: 340px; width: 380px; height: 60px; border-radius: 8px; }
-
-        .info-card {
-            position: absolute;
+        .level-info {
             background: white;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 10px 0;
+            border-left: 4px solid #d4af37;
+            display: none;
+        }
+
+        .level-info.active {
+            display: block;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Интерактивные дома */
+        .houses-container {
+            display: grid;
+            gap: 20px;
+        }
+
+        .house-card {
+            background: #f9f5e7;
+            border-radius: 15px;
+            padding: 20px;
+            border: 2px solid #d4af37;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .house-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+        }
+
+        .house-card.active {
+            border-color: #28a745;
+            background: #e8f5e8;
+        }
+
+        .house-title {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #8b4513;
+            margin-bottom: 10px;
+        }
+
+        .house-details {
+            display: none;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid #d4af37;
+        }
+
+        .house-details.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .house-feature {
+            background: white;
+            padding: 10px;
+            margin: 8px 0;
+            border-radius: 8px;
+            border-left: 3px solid #d4af37;
+        }
+
+        /* Квизы */
+        .quiz-container {
+            background: #f8f9fa;
             padding: 20px;
             border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-            max-width: 300px;
-            opacity: 0;
-            transform: scale(0.8);
-            transition: all 0.3s ease;
-            border: 2px solid #d4af37;
-            z-index: 100;
-        }
-
-        .info-card.active {
-            opacity: 1;
-            transform: scale(1);
-        }
-
-        .quiz-container {
-            background: #f9f5e7;
-            padding: 20px;
-            border-radius: 10px;
             margin: 20px 0;
         }
 
-        .quiz-question {
+        .question {
             font-size: 1.1rem;
+            font-weight: bold;
             margin-bottom: 15px;
             color: #2c1810;
-            font-weight: bold;
-        }
-
-        .quiz-options {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 10px;
         }
 
         .quiz-option {
             background: white;
-            padding: 12px 15px;
+            padding: 15px;
+            margin: 10px 0;
             border: 2px solid #d4af37;
-            border-radius: 8px;
+            border-radius: 10px;
             cursor: pointer;
             transition: all 0.3s ease;
         }
@@ -188,608 +367,681 @@
         .quiz-option.correct {
             background: #d4edda;
             border-color: #28a745;
+            color: #155724;
         }
 
         .quiz-option.incorrect {
             background: #f8d7da;
             border-color: #dc3545;
+            color: #721c24;
         }
 
-        .symbols-container {
-            display: flex;
-            justify-content: space-around;
-            align-items: center;
-            margin: 30px 0;
-            flex-wrap: wrap;
-            gap: 20px;
+        .quiz-option.disabled {
+            cursor: not-allowed;
+            opacity: 0.7;
         }
 
-        .symbol {
-            background: #f9f5e7;
-            padding: 20px;
-            border-radius: 15px;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            border: 3px solid #d4af37;
-            min-width: 150px;
-        }
-
-        .symbol:hover {
-            transform: scale(1.1);
-            box-shadow: 0 8px 20px rgba(0,0,0,0.2);
-        }
-
-        .symbol-icon {
-            font-size: 3rem;
-            margin-bottom: 10px;
-            display: block;
-        }
-
-        .interactive-house {
-            background: #f9f5e7;
-            border: 2px solid #8b4513;
-            border-radius: 15px;
-            padding: 20px;
-            margin: 20px 0;
-            position: relative;
-            min-height: 300px;
-        }
-
-        .house-zone {
-            position: absolute;
-            background: rgba(212, 175, 55, 0.3);
-            border: 2px dashed #d4af37;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-        }
-
-        .house-zone:hover {
-            background: rgba(212, 175, 55, 0.6);
-            transform: scale(1.05);
-        }
-
-        .progress-bar {
-            background: #e0e0e0;
-            height: 20px;
-            border-radius: 10px;
-            overflow: hidden;
-            margin: 20px 0;
-        }
-
-        .progress-fill {
-            background: linear-gradient(90deg, #d4af37, #ffd700);
-            height: 100%;
-            width: 0%;
-            transition: width 0.5s ease;
-            border-radius: 10px;
-        }
-
+        /* Кнопки */
         .btn {
             background: linear-gradient(45deg, #8b4513, #cd853f);
             color: white;
-            padding: 12px 25px;
+            padding: 12px 20px;
             border: none;
             border-radius: 8px;
             cursor: pointer;
             font-size: 1rem;
             transition: all 0.3s ease;
-            margin: 10px 5px;
+            margin: 5px;
+            width: 100%;
+            max-width: 200px;
         }
 
         .btn:hover {
             transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
         }
 
-        .comparison-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin: 20px 0;
-            background: white;
-            border-radius: 10px;
-            overflow: hidden;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        .btn:active {
+            transform: translateY(0);
         }
 
-        .comparison-table th,
-        .comparison-table td {
-            padding: 15px;
-            text-align: left;
-            border-bottom: 1px solid #ddd;
-        }
-
-        .comparison-table th {
-            background: linear-gradient(45deg, #8b4513, #cd853f);
-            color: white;
-        }
-
-        .final-score {
-            text-align: center;
-            font-size: 1.5rem;
-            margin: 20px 0;
+        /* Результаты */
+        .result-container {
+            background: #e8f5e8;
             padding: 20px;
-            background: #d4edda;
-            border-radius: 10px;
+            border-radius: 15px;
+            text-align: center;
+            margin: 20px 0;
             border: 2px solid #28a745;
         }
 
-        .hidden {
-            display: none;
+        .score-display {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #28a745;
+            margin: 10px 0;
         }
 
-        @media (max-width: 768px) {
-            .header h1 {
-                font-size: 2rem;
+        /* Адаптивность */
+        @media (min-width: 768px) {
+            .app-container {
+                max-width: 800px;
+                margin: 20px auto;
+                border-radius: 20px;
+                overflow: hidden;
+                box-shadow: 0 10px 30px rgba(0,0,0,0.2);
             }
-            
-            .pyramid {
-                width: 300px;
-                height: 300px;
+
+            .flashcards-container {
+                grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
             }
-            
-            .symbols-container {
-                flex-direction: column;
+
+            .houses-container {
+                grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
             }
-            
-            .section {
-                padding: 20px;
+
+            .tab-btn {
+                font-size: 1rem;
             }
+
+            .btn {
+                width: auto;
+            }
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .success-animation {
+            animation: bounce 0.6s ease;
+        }
+
+        @keyframes bounce {
+            0%, 20%, 60%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-10px); }
+            80% { transform: translateY(-5px); }
         }
     </style>
 </head>
 <body>
-    <div class="workbook-container">
+    <div class="app-container">
         <!-- Заголовок -->
         <div class="header">
             <h1>🏛️ Общество Древнего Египта</h1>
-            <p>Интерактивное путешествие по социальной иерархии древних египтян</p>
-            <div class="progress-bar">
-                <div class="progress-fill" id="progressBar"></div>
+            <div class="progress-container">
+                <div class="progress-bar" id="progressBar"></div>
             </div>
         </div>
 
-        <!-- Ключевые термины -->
-        <div class="section">
-            <h2>📚 Ключевые понятия</h2>
-            <div class="key-terms">
-                <div class="term-card" onclick="showTermInfo('hierarchy')">
-                    <h4>Иерархия</h4>
-                    <p>Расположение слоёв общества от низших к высшим</p>
-                </div>
-                <div class="term-card" onclick="showTermInfo('despotism')">
-                    <h4>Деспотия</h4>
-                    <p>Неограниченная власть правителя</p>
-                </div>
-                <div class="term-card" onclick="showTermInfo('pharaoh')">
-                    <h4>Фараон</h4>
-                    <p>Верховный правитель Древнего Египта</p>
-                </div>
-                <div class="term-card" onclick="showTermInfo('priests')">
-                    <h4>Жрецы</h4>
-                    <p>Служители богов, обладавшие знаниями</p>
-                </div>
-                <div class="term-card" onclick="showTermInfo('nomarchs')">
-                    <h4>Номархи</h4>
-                    <p>Правители номов (областей)</p>
-                </div>
-                <div class="term-card" onclick="showTermInfo('scribes')">
-                    <h4>Писцы</h4>
-                    <p>Образованные чиновники, ведущие записи</p>
-                </div>
-            </div>
-        </div>
+        <!-- Навигация по вкладкам -->
+        <nav class="tab-navigation">
+            <button class="tab-btn active" onclick="switchTab('flashcards')">📚 Изучение</button>
+            <button class="tab-btn" onclick="switchTab('pyramid')">🔺 Пирамида</button>
+            <button class="tab-btn" onclick="switchTab('matching')">🎯 Сопоставление</button>
+            <button class="tab-btn" onclick="switchTab('houses')">🏠 Быт</button>
+            <button class="tab-btn" onclick="switchTab('quiz')">❓ Тест</button>
+        </nav>
 
-        <!-- Социальная пирамида -->
-        <div class="section">
-            <h2>🔺 Социальная пирамида Древнего Египта</h2>
-            <p>Нажмите на уровни пирамиды, чтобы узнать больше о каждом слое общества:</p>
+        <!-- Вкладка: Флэш-карты -->
+        <div class="tab-content active" id="flashcards">
+            <h2 class="section-title">Изучаем термины</h2>
+            <p style="text-align: center; margin-bottom: 20px;">Нажмите на карточку, чтобы увидеть определение</p>
             
-            <div class="pyramid-container">
-                <div class="pyramid">
-                    <div class="pyramid-level level-1" onclick="showPyramidInfo('pharaoh', this)">
-                        Фараон
-                    </div>
-                    <div class="pyramid-level level-2" onclick="showPyramidInfo('officials', this)">
-                        Чиновники и жрецы
-                    </div>
-                    <div class="pyramid-level level-3" onclick="showPyramidInfo('nobles', this)">
-                        Вельможи и писцы
-                    </div>
-                    <div class="pyramid-level level-4" onclick="showPyramidInfo('workers', this)">
-                        Земледельцы и ремесленники
-                    </div>
-                    <div class="pyramid-level level-5" onclick="showPyramidInfo('slaves', this)">
-                        Рабы
+            <div class="flashcards-container">
+                <div class="flashcard" onclick="flipCard(this)">
+                    <div class="flashcard-inner">
+                        <div class="flashcard-front">ФАРАОН</div>
+                        <div class="flashcard-back">Верховный правитель Древнего Египта, которого считали живым богом. Обладал неограниченной властью.</div>
                     </div>
                 </div>
-                
-                <div class="info-card" id="pyramidInfo">
-                    <h3 id="infoTitle"></h3>
-                    <p id="infoText"></p>
-                    <button class="btn" onclick="closePyramidInfo()">Закрыть</button>
+
+                <div class="flashcard" onclick="flipCard(this)">
+                    <div class="flashcard-inner">
+                        <div class="flashcard-front">ДЕСПОТИЯ</div>
+                        <div class="flashcard-back">Форма правления, при которой власть царя ничем не ограничена. Фараон мог делать всё, что хотел.</div>
+                    </div>
                 </div>
+
+                <div class="flashcard" onclick="flipCard(this)">
+                    <div class="flashcard-inner">
+                        <div class="flashcard-front">ЖРЕЦЫ</div>
+                        <div class="flashcard-back">Служители богов, которые проводили обряды и обладали знаниями астрономии. Составляли календари.</div>
+                    </div>
+                </div>
+
+                <div class="flashcard" onclick="flipCard(this)">
+                    <div class="flashcard-inner">
+                        <div class="flashcard-front">НОМАРХИ</div>
+                        <div class="flashcard-back">Правители номов (областей), которые следили за порядком и сбором налогов в своих регионах.</div>
+                    </div>
+                </div>
+
+                <div class="flashcard" onclick="flipCard(this)">
+                    <div class="flashcard-inner">
+                        <div class="flashcard-front">ПИСЦЫ</div>
+                        <div class="flashcard-back">Образованные чиновники, которые умели читать и писать. Вели учёт всему в государстве.</div>
+                    </div>
+                </div>
+
+                <div class="flashcard" onclick="flipCard(this)">
+                    <div class="flashcard-inner">
+                        <div class="flashcard-front">ВЕЛЬМОЖИ</div>
+                        <div class="flashcard-back">Знатные и богатые люди, которые владели землями и служили фараону. Жили в роскошных домах.</div>
+                    </div>
+                </div>
+            </div>
+
+            <div style="text-align: center; margin-top: 30px;">
+                <button class="btn" onclick="resetFlashcards()">🔄 Перевернуть все карточки</button>
             </div>
         </div>
 
-        <!-- Символы власти фараона -->
-        <div class="section">
-            <h2>👑 Символы власти фараона</h2>
-            <p>Изучите символы, которые показывали могущество египетских правителей:</p>
+        <!-- Вкладка: Пирамида общества -->
+        <div class="tab-content" id="pyramid">
+            <h2 class="section-title">Социальная пирамида</h2>
+            <p style="text-align: center; margin-bottom: 20px;">Нажмите на уровень, чтобы узнать подробности</p>
             
-            <div class="symbols-container">
-                <div class="symbol" onclick="showSymbolInfo('crown')">
-                    <span class="symbol-icon">👑</span>
-                    <h4>Двойная корона</h4>
+            <div class="pyramid-interactive">
+                <div class="pyramid-level" onclick="showLevelInfo('pharaoh')">👑 ФАРАОН</div>
+                <div class="pyramid-level" onclick="showLevelInfo('officials')">⚖️ ЖРЕЦЫ И ЧИНОВНИКИ</div>
+                <div class="pyramid-level" onclick="showLevelInfo('nobles')">📜 ВЕЛЬМОЖИ И ПИСЦЫ</div>
+                <div class="pyramid-level" onclick="showLevelInfo('workers')">🌾 ЗЕМЛЕДЕЛЬЦЫ И РЕМЕСЛЕННИКИ</div>
+                <div class="pyramid-level" onclick="showLevelInfo('slaves')">⛓️ РАБЫ</div>
+
+                <div class="level-info" id="info-pharaoh">
+                    <strong>Фараон - божественный правитель</strong><br>
+                    • Считался живым богом на земле<br>
+                    • Вся земля принадлежала государству<br>
+                    • Символы власти: корона, скипетр, плеть<br>
+                    • Жил в роскошном дворце
                 </div>
-                <div class="symbol" onclick="showSymbolInfo('scepter')">
-                    <span class="symbol-icon">🔱</span>
-                    <h4>Скипетр</h4>
+
+                <div class="level-info" id="info-officials">
+                    <strong>Жрецы и чиновники</strong><br>
+                    • Жрецы служили богам и знали астрономию<br>
+                    • Чиновники помогали управлять страной<br>
+                    • Следили за порядком и сбором налогов<br>
+                    • Получали земли от фараона
                 </div>
-                <div class="symbol" onclick="showSymbolInfo('whip')">
-                    <span class="symbol-icon">🎯</span>
-                    <h4>Плеть</h4>
+
+                <div class="level-info" id="info-nobles">
+                    <strong>Вельможи и писцы</strong><br>
+                    • Вельможи владели большими землями<br>
+                    • Писцы вели все государственные записи<br>
+                    • Жили в больших домах с садами<br>
+                    • Пользовались особым уважением
                 </div>
-                <div class="symbol" onclick="showSymbolInfo('throne')">
-                    <span class="symbol-icon">🪑</span>
-                    <h4>Трон</h4>
+
+                <div class="level-info" id="info-workers">
+                    <strong>Основное население</strong><br>
+                    • Составляли большинство населения<br>
+                    • Платили налоги государству<br>
+                    • Несли трудовые повинности<br>
+                    • Жили в простых домах из глины
+                </div>
+
+                <div class="level-info" id="info-slaves">
+                    <strong>Рабы - "живые убитые"</strong><br>
+                    • В основном военнопленные<br>
+                    • Выполняли самую тяжёлую работу<br>
+                    • Считались собственностью хозяев<br>
+                    • Некоторые египтяне продавались за долги
                 </div>
             </div>
+        </div>
+
+        <!-- Вкладка: Игра на сопоставление -->
+        <div class="tab-content" id="matching">
+            <h2 class="section-title">Сопоставь понятия и определения</h2>
+            <p style="text-align: center; margin-bottom: 20px;">Перетащите термины к правильным определениям</p>
             
-            <div id="symbolInfo" class="hidden">
-                <div style="background: #f9f5e7; padding: 20px; border-radius: 10px; margin-top: 20px;">
-                    <h4 id="symbolTitle"></h4>
-                    <p id="symbolDescription"></p>
+            <div class="matching-game">
+                <div class="terms-container">
+                    <div class="game-title">Термины:</div>
+                    <div class="draggable-item" draggable="true" data-term="hierarchy">Иерархия</div>
+                    <div class="draggable-item" draggable="true" data-term="treasury">Казна</div>
+                    <div class="draggable-item" draggable="true" data-term="taxes">Налоги</div>
+                    <div class="draggable-item" draggable="true" data-term="corvee">Повинности</div>
+                </div>
+
+                <div class="definitions-container">
+                    <div class="game-title">Определения:</div>
+                    <div class="drop-zone" data-answer="hierarchy">Расположение слоёв общества от низших к высшим</div>
+                    <div class="drop-zone" data-answer="treasury">Место хранения государственных богатств</div>
+                    <div class="drop-zone" data-answer="taxes">Обязательные платежи в пользу государства</div>
+                    <div class="drop-zone" data-answer="corvee">Принудительные работы для государства</div>
+                </div>
+
+                <div style="text-align: center; margin-top: 20px;">
+                    <button class="btn" onclick="resetMatching()">🔄 Начать заново</button>
+                    <button class="btn" onclick="checkMatching()">✅ Проверить</button>
+                </div>
+
+                <div id="matchingResult" class="hidden result-container">
+                    <h3>Результат:</h3>
+                    <div class="score-display" id="matchingScore">0/4</div>
                 </div>
             </div>
         </div>
 
-        <!-- Квиз о власти фараона -->
-        <div class="section">
-            <h2>❓ Проверим знания: Власть фараона</h2>
-            <div class="quiz-container">
-                <div class="quiz-question">
-                    Почему египтяне не могли свергнуть даже плохого фараона?
-                </div>
-                <div class="quiz-options">
-                    <div class="quiz-option" onclick="checkAnswer(this, false)">
-                        Потому что у фараона была сильная армия
-                    </div>
-                    <div class="quiz-option" onclick="checkAnswer(this, true)">
-                        Потому что фараон считался богом, и свержение означало идти против воли богов
-                    </div>
-                    <div class="quiz-option" onclick="checkAnswer(this, false)">
-                        Потому что народ боялся наказания
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Интерактивный дом египтянина -->
-        <div class="section">
-            <h2>🏠 Быт египтян разных сословий</h2>
-            <p>Выберите тип жилища, чтобы узнать о быте его обитателей:</p>
+        <!-- Вкладка: Быт египтян -->
+        <div class="tab-content" id="houses">
+            <h2 class="section-title">Быт разных сословий</h2>
+            <p style="text-align: center; margin-bottom: 20px;">Нажмите на карточку, чтобы узнать о жизни разных слоёв общества</p>
             
-            <div style="display: flex; gap: 20px; flex-wrap: wrap; margin: 20px 0;">
-                <button class="btn" onclick="showHouse('noble')">Дом вельможи</button>
-                <button class="btn" onclick="showHouse('craftsman')">Дом ремесленника</button>
-                <button class="btn" onclick="showHouse('farmer')">Дом земледельца</button>
-            </div>
-            
-            <div class="interactive-house" id="houseDisplay">
-                <div style="text-align: center; margin-top: 100px;">
-                    <h3>Выберите тип жилища</h3>
-                    <p>Нажмите на кнопки выше, чтобы увидеть, как жили разные слои общества</p>
+            <div class="houses-container">
+                <div class="house-card" onclick="toggleHouse(this, 'pharaoh')">
+                    <div class="house-title">🏛️ Дворец фараона</div>
+                    <p>Роскошная резиденция божественного правителя</p>
+                    <div class="house-details">
+                        <div class="house-feature">👑 Тронный зал с символами власти</div>
+                        <div class="house-feature">🛏️ Роскошные покои</div>
+                        <div class="house-feature">🌺 Сады с экзотическими растениями</div>
+                        <div class="house-feature">👥 Сотни слуг и охранников</div>
+                        <div class="house-feature">🍽️ Изысканные пиры</div>
+                    </div>
+                </div>
+
+                <div class="house-card" onclick="toggleHouse(this, 'noble')">
+                    <div class="house-title">🏘️ Дом вельможи</div>
+                    <p>Большой дом знатного человека</p>
+                    <div class="house-details">
+                        <div class="house-feature">🏡 Большой дом с несколькими комнатами</div>
+                        <div class="house-feature">🌳 Сад с фруктовыми деревьями</div>
+                        <div class="house-feature">👨‍🍳 Повара и слуги</div>
+                        <div class="house-feature">💺 Носилки для передвижения</div>
+                        <div class="house-feature">🎭 Развлечения: охота, музыка</div>
+                    </div>
+                </div>
+
+                <div class="house-card" onclick="toggleHouse(this, 'craftsman')">
+                    <div class="house-title">🔨 Дом ремесленника</div>
+                    <p>Жилище мастера своего дела</p>
+                    <div class="house-details">
+                        <div class="house-feature">🛠️ Мастерская с инструментами</div>
+                        <div class="house-feature">🏠 Простые комнаты для семьи</div>
+                        <div class="house-feature">🌾 Небольшой двор</div>
+                        <div class="house-feature">💰 Изделия для продажи</div>
+                        <div class="house-feature">📝 Учёт налогов писцами</div>
+                    </div>
+                </div>
+
+                <div class="house-card" onclick="toggleHouse(this, 'farmer')">
+                    <div class="house-title">🌾 Дом земледельца</div>
+                    <p>Простое жилище крестьянина</p>
+                    <div class="house-details">
+                        <div class="house-feature">🧱 Дом из глиняных кирпичей</div>
+                        <div class="house-feature">🍇 Садик с виноградом и инжиром</div>
+                        <div class="house-feature">🐄 Домашние животные</div>
+                        <div class="house-feature">🍞 Ячменные лепёшки - основная еда</div>
+                        <div class="house-feature">🎣 Рыбная ловля на лодке</div>
+                    </div>
                 </div>
             </div>
         </div>
 
-        <!-- Сравнительная таблица -->
-        <div class="section">
-            <h2>📊 Сравнение положения в обществе</h2>
-            <table class="comparison-table">
-                <thead>
-                    <tr>
-                        <th>Социальный слой</th>
-                        <th>Права</th>
-                        <th>Обязанности</th>
-                        <th>Условия жизни</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td><strong>Фараон</strong></td>
-                        <td>Неограниченная власть</td>
-                        <td>Управление государством</td>
-                        <td>Роскошные дворцы</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Вельможи</strong></td>
-                        <td>Владение землёй и рабами</td>
-                        <td>Служба фараону</td>
-                        <td>Большие дома с садами</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Жрецы</strong></td>
-                        <td>Получение даров от фараона</td>
-                        <td>Служение богам</td>
-                        <td>Жизнь при храмах</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Земледельцы</strong></td>
-                        <td>Наследование земельного надела</td>
-                        <td>Уплата налогов, повинности</td>
-                        <td>Простые дома из глины</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Рабы</strong></td>
-                        <td>Отсутствуют</td>
-                        <td>Тяжёлая работа</td>
-                        <td>Собственность хозяев</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-
-        <!-- Финальный тест -->
-        <div class="section">
-            <h2>🎯 Итоговый тест</h2>
-            <div id="finalQuiz">
+        <!-- Вкладка: Итоговый тест -->
+        <div class="tab-content" id="quiz">
+            <h2 class="section-title">Проверим знания!</h2>
+            
+            <div id="quizContainer">
                 <div class="quiz-container">
-                    <div class="quiz-question" id="finalQuestion">
-                        Кто составлял основное население Древнего Египта?
-                    </div>
-                    <div class="quiz-options" id="finalOptions">
-                        <div class="quiz-option" onclick="finalAnswer(this, false)">Жрецы и вельможи</div>
-                        <div class="quiz-option" onclick="finalAnswer(this, true)">Земледельцы и ремесленники</div>
-                        <div class="quiz-option" onclick="finalAnswer(this, false)">Рабы и чиновники</div>
-                    </div>
+                    <div class="question" id="currentQuestion">Какой властью обладал фараон в Древнем Египте?</div>
+                    <div class="quiz-option" onclick="selectAnswer(this, false)">Ограниченной властью</div>
+                    <div class="quiz-option" onclick="selectAnswer(this, true)">Неограниченной властью (деспотия)</div>
+                    <div class="quiz-option" onclick="selectAnswer(this, false)">Властью только в военное время</div>
                 </div>
             </div>
-            
-            <div id="finalResult" class="hidden">
-                <div class="final-score">
-                    <h3>🎉 Поздравляем!</h3>
-                    <p>Вы успешно изучили структуру общества Древнего Египта!</p>
-                    <p>Ваш результат: <span id="scoreDisplay">0</span>%</p>
-                    <button class="btn" onclick="restartWorkbook()">Пройти ещё раз</button>
-                </div>
+
+            <div id="quizResult" class="hidden result-container">
+                <h3>🎉 Тест завершён!</h3>
+                <div class="score-display" id="finalScore">0/5</div>
+                <p id="scoreComment">Отличный результат!</p>
+                <button class="btn" onclick="restartQuiz()">🔄 Пройти ещё раз</button>
             </div>
         </div>
     </div>
 
     <script>
+        // Глобальные переменные
+        let currentTab = 'flashcards';
         let progress = 0;
-        let score = 0;
-        let totalQuestions = 0;
-        let correctAnswers = 0;
+        let quizScore = 0;
+        let currentQuestionIndex = 0;
+        let matchingScore = 0;
 
-        // Данные для пирамиды
-        const pyramidData = {
-            pharaoh: {
-                title: "Фараон - божественный правитель",
-                text: "Фараон обладал неограниченной властью. Египтяне считали его богом, связанным с богом Солнца Ра. Вся земля принадлежала государству, а фараон мог жаловать её своим подданным."
+        // Вопросы для квиза
+        const quizQuestions = [
+            {
+                question: "Какой властью обладал фараон в Древнем Египте?",
+                options: ["Ограниченной властью", "Неограниченной властью (деспотия)", "Властью только в военное время"],
+                correct: 1
             },
-            officials: {
-                title: "Чиновники и жрецы",
-                text: "Жрецы служили богам и обладали знаниями астрономии. Чиновники помогали фараону управлять страной, следили за порядком и сбором налогов."
+            {
+                question: "Кто составлял основное население Древнего Египта?",
+                options: ["Жрецы и вельможи", "Земледельцы и ремесленники", "Рабы и чиновники"],
+                correct: 1
             },
-            nobles: {
-                title: "Вельможи и писцы",
-                text: "Вельможи владели большими землями и стадами. Писцы вели учёт всему в государстве и пользовались особым уважением за свою грамотность."
+            {
+                question: "Как называли пленных, обращённых в рабство?",
+                options: ["Слуги богов", "Живые убитые", "Носители воды"],
+                correct: 1
             },
-            workers: {
-                title: "Земледельцы и ремесленники",
-                text: "Основное население Египта. Земледельцы платили налоги и несли повинности. Ремесленники создавали орудия труда, украшения, строили корабли."
+            {
+                question: "Что было символом власти фараона над двумя частями Египта?",
+                options: ["Двойная корона", "Золотой скипетр", "Священная плеть"],
+                correct: 0
             },
-            slaves: {
-                title: "Рабы",
-                text: "Рабы выполняли самую тяжёлую работу. В основном это были пленные, которых называли 'живые убитые'. Некоторые египтяне становились рабами за долги."
+            {
+                question: "Кто обладал знаниями астрономии и составлял календари?",
+                options: ["Писцы", "Жрецы", "Вельможи"],
+                correct: 1
             }
-        };
+        ];
 
-        // Данные о символах власти
-        const symbolsData = {
-            crown: {
-                title: "Двойная корона",
-                description: "Символизировала власть над Верхним и Нижним Египтом. Показывала, что фараон объединил две части страны под своей властью."
-            },
-            scepter: {
-                title: "Скипетр",
-                description: "Символ королевской власти и божественного авторитета. Фараон держал его во время официальных церемоний."
-            },
-            whip: {
-                title: "Плеть",
-                description: "Символ власти над подданными и способности наказывать непослушных. Показывала строгость фараона."
-            },
-            throne: {
-                title: "Трон",
-                description: "Место, где восседал фараон во время приёма подданных. Подданные падали перед троном и целовали землю."
-            }
-        };
+        // Переключение вкладок
+        function switchTab(tabId) {
+            // Скрыть все вкладки
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Убрать активный класс у всех кнопок
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            // Показать выбранную вкладку
+            document.getElementById(tabId).classList.add('active');
+            event.target.classList.add('active');
+            
+            currentTab = tabId;
+            updateProgress();
+        }
 
-        // Данные о домах
-        const housesData = {
-            noble: {
-                title: "Дом вельможи",
-                description: "Большой дом с садами, множество слуг. Повара готовят изысканные блюда, парикмахеры делают причёски, лекари следят за здоровьем.",
-                zones: [
-                    { text: "Покои хозяина", style: "top: 20px; left: 50px; width: 100px; height: 60px;" },
-                    { text: "Сад", style: "top: 100px; right: 30px; width: 80px; height: 50px;" },
-                    { text: "Кухня", style: "bottom: 60px; left: 30px; width: 90px; height: 50px;" },
-                    { text: "Покои слуг", style: "bottom: 20px; right: 50px; width: 100px; height: 40px;" }
-                ]
-            },
-            craftsman: {
-                title: "Дом ремесленника",
-                description: "Простое жилище с мастерской. Семья занимается ремеслом, изготавливает изделия для продажи и уплаты налогов.",
-                zones: [
-                    { text: "Мастерская", style: "top: 30px; left: 40px; width: 120px; height: 80px;" },
-                    { text: "Жилая комната", style: "top: 30px; right: 40px; width: 100px; height: 60px;" },
-                    { text: "Двор", style: "bottom: 40px; left: 60px; width: 150px; height: 60px;" }
-                ]
-            },
-            farmer: {
-                title: "Дом земледельца",
-                description: "Небольшой дом из глиняных кирпичей с садиком. Семья выращивает зерно, разводит домашних животных, ловит рыбу.",
-                zones: [
-                    { text: "Жилая комната", style: "top: 40px; left: 80px; width: 120px; height: 70px;" },
-                    { text: "Садик", style: "bottom: 50px; left: 50px; width: 100px; height: 60px;" },
-                    { text: "Хлев", style: "bottom: 50px; right: 60px; width: 80px; height: 50px;" }
-                ]
-            }
-        };
-
+        // Обновление прогресса
         function updateProgress() {
-            progress += 20;
+            const tabs = ['flashcards', 'pyramid', 'matching', 'houses', 'quiz'];
+            const currentIndex = tabs.indexOf(currentTab);
+            progress = Math.min(100, (currentIndex + 1) * 20);
             document.getElementById('progressBar').style.width = progress + '%';
         }
 
-        function showTermInfo(term) {
-            const terms = {
-                hierarchy: "Иерархия - это система организации общества по уровням власти и богатства. В Древнем Египте общество напоминало пирамиду.",
-                despotism: "Деспотия - форма правления, при которой власть правителя ничем не ограничена. Фараон мог делать всё, что хотел.",
-                pharaoh: "Фараон - верховный правитель Египта, которого считали живым богом на земле. Изначально слово означало 'великий дом'.",
-                priests: "Жрецы - служители богов, которые проводили религиозные обряды и обладали знаниями астрономии и медицины.",
-                nomarchs: "Номархи - правители номов (областей Египта), которые следили за порядком и сбором налогов в своих регионах.",
-                scribes: "Писцы - образованные люди, которые умели читать и писать. Они вели все государственные записи и пользовались большим уважением."
-            };
-            
-            alert(terms[term]);
-            updateProgress();
+        // Флэш-карты
+        function flipCard(card) {
+            card.classList.toggle('flipped');
+            card.classList.add('success-animation');
+            setTimeout(() => card.classList.remove('success-animation'), 600);
         }
 
-        function showPyramidInfo(level, element) {
-            const info = pyramidData[level];
-            const card = document.getElementById('pyramidInfo');
-            
-            document.getElementById('infoTitle').textContent = info.title;
-            document.getElementById('infoText').textContent = info.text;
-            
-            const rect = element.getBoundingClientRect();
-            const container = document.querySelector('.pyramid-container').getBoundingClientRect();
-            
-            card.style.left = (rect.right - container.left + 20) + 'px';
-            card.style.top = (rect.top - container.top) + 'px';
-            card.classList.add('active');
-            
-            updateProgress();
+        function resetFlashcards() {
+            document.querySelectorAll('.flashcard').forEach(card => {
+                card.classList.remove('flipped');
+            });
         }
 
-        function closePyramidInfo() {
-            document.getElementById('pyramidInfo').classList.remove('active');
-        }
-
-        function showSymbolInfo(symbol) {
-            const info = symbolsData[symbol];
-            const infoDiv = document.getElementById('symbolInfo');
-            
-            document.getElementById('symbolTitle').textContent = info.title;
-            document.getElementById('symbolDescription').textContent = info.description;
-            
-            infoDiv.classList.remove('hidden');
-            updateProgress();
-        }
-
-        function checkAnswer(element, isCorrect) {
-            totalQuestions++;
-            
-            if (isCorrect) {
-                element.classList.add('correct');
-                correctAnswers++;
-            } else {
-                element.classList.add('incorrect');
-            }
-            
-            // Отключаем другие опции
-            const options = element.parentNode.querySelectorAll('.quiz-option');
-            options.forEach(option => {
-                option.style.pointerEvents = 'none';
-                if (option !== element && option.textContent.includes('богом')) {
-                    option.classList.add('correct');
-                }
+        // Пирамида общества
+        function showLevelInfo(level) {
+            // Скрыть все info блоки
+            document.querySelectorAll('.level-info').forEach(info => {
+                info.classList.remove('active');
             });
             
-            updateProgress();
+            // Показать выбранный
+            document.getElementById('info-' + level).classList.add('active');
         }
 
-        function showHouse(type) {
-            const house = housesData[type];
-            const display = document.getElementById('houseDisplay');
+        // Drag & Drop игра
+        let draggedElement = null;
+
+        document.addEventListener('DOMContentLoaded', function() {
+            initDragAndDrop();
+        });
+
+        function initDragAndDrop() {
+            const draggables = document.querySelectorAll('.draggable-item');
+            const dropZones = document.querySelectorAll('.drop-zone');
+
+            draggables.forEach(item => {
+                item.addEventListener('dragstart', handleDragStart);
+                item.addEventListener('dragend', handleDragEnd);
+                
+                // Touch events для мобильных устройств
+                item.addEventListener('touchstart', handleTouchStart, {passive: false});
+                item.addEventListener('touchmove', handleTouchMove, {passive: false});
+                item.addEventListener('touchend', handleTouchEnd, {passive: false});
+            });
+
+            dropZones.forEach(zone => {
+                zone.addEventListener('dragover', handleDragOver);
+                zone.addEventListener('drop', handleDrop);
+                zone.addEventListener('dragenter', handleDragEnter);
+                zone.addEventListener('dragleave', handleDragLeave);
+            });
+        }
+
+        function handleDragStart(e) {
+            draggedElement = this;
+            this.classList.add('dragging');
+            e.dataTransfer.effectAllowed = 'move';
+            e.dataTransfer.setData('text/html', this.outerHTML);
+        }
+
+        function handleDragEnd(e) {
+            this.classList.remove('dragging');
+        }
+
+        function handleDragOver(e) {
+            e.preventDefault();
+            e.dataTransfer.dropEffect = 'move';
+        }
+
+        function handleDragEnter(e) {
+            this.classList.add('drag-over');
+        }
+
+        function handleDragLeave(e) {
+            this.classList.remove('drag-over');
+        }
+
+        function handleDrop(e) {
+            e.preventDefault();
+            this.classList.remove('drag-over');
             
-            display.innerHTML = `
-                <h3>${house.title}</h3>
-                <p>${house.description}</p>
-                ${house.zones.map(zone => 
-                    `<div class="house-zone" style="${zone.style}" onclick="alert('${zone.text}: ${house.description}')">${zone.text}</div>`
-                ).join('')}
+            if (draggedElement) {
+                this.appendChild(draggedElement);
+                this.classList.add('filled');
+                draggedElement = null;
+            }
+        }
+
+        // Touch события для мобильных
+        let touchItem = null;
+        let touchOffset = {x: 0, y: 0};
+
+        function handleTouchStart(e) {
+            touchItem = this;
+            this.classList.add('dragging');
+            
+            const touch = e.touches[0];
+            const rect = this.getBoundingClientRect();
+            touchOffset.x = touch.clientX - rect.left;
+            touchOffset.y = touch.clientY - rect.top;
+        }
+
+        function handleTouchMove(e) {
+            e.preventDefault();
+            if (!touchItem) return;
+
+            const touch = e.touches[0];
+            touchItem.style.position = 'fixed';
+            touchItem.style.left = (touch.clientX - touchOffset.x) + 'px';
+            touchItem.style.top = (touch.clientY - touchOffset.y) + 'px';
+            touchItem.style.zIndex = '1000';
+        }
+
+        function handleTouchEnd(e) {
+            if (!touchItem) return;
+
+            const touch = e.changedTouches[0];
+            const elementAtPoint = document.elementFromPoint(touch.clientX, touch.clientY);
+            const dropZone = elementAtPoint?.closest('.drop-zone');
+
+            if (dropZone) {
+                dropZone.appendChild(touchItem);
+                dropZone.classList.add('filled');
+            }
+
+            // Сброс стилей
+            touchItem.style.position = '';
+            touchItem.style.left = '';
+            touchItem.style.top = '';
+            touchItem.style.zIndex = '';
+            touchItem.classList.remove('dragging');
+            touchItem = null;
+        }
+
+        function resetMatching() {
+            const container = document.querySelector('.terms-container');
+            document.querySelectorAll('.draggable-item').forEach(item => {
+                container.appendChild(item);
+                item.style.position = '';
+                item.style.left = '';
+                item.style.top = '';
+                item.style.zIndex = '';
+            });
+
+            document.querySelectorAll('.drop-zone').forEach(zone => {
+                zone.classList.remove('filled', 'correct', 'incorrect');
+            });
+
+            document.getElementById('matchingResult').classList.add('hidden');
+        }
+
+        function checkMatching() {
+            let correct = 0;
+            const dropZones = document.querySelectorAll('.drop-zone');
+            
+            dropZones.forEach(zone => {
+                const droppedItem = zone.querySelector('.draggable-item');
+                if (droppedItem) {
+                    const termData = droppedItem.getAttribute('data-term');
+                    const expectedAnswer = zone.getAttribute('data-answer');
+                    
+                    if (termData === expectedAnswer) {
+                        zone.classList.add('correct');
+                        zone.classList.remove('incorrect');
+                        correct++;
+                    } else {
+                        zone.classList.add('incorrect');
+                        zone.classList.remove('correct');
+                    }
+                }
+            });
+
+            document.getElementById('matchingScore').textContent = `${correct}/4`;
+            document.getElementById('matchingResult').classList.remove('hidden');
+            
+            if (correct === 4) {
+                document.getElementById('matchingResult').innerHTML += '<p>🎉 Отлично! Все термины сопоставлены правильно!</p>';
+            }
+        }
+
+        // Интерактивные дома
+        function toggleHouse(element, type) {
+            // Закрыть все остальные
+            document.querySelectorAll('.house-card').forEach(card => {
+                if (card !== element) {
+                    card.classList.remove('active');
+                    card.querySelector('.house-details').classList.remove('active');
+                }
+            });
+
+            // Переключить текущий
+            element.classList.toggle('active');
+            const details = element.querySelector('.house-details');
+            details.classList.toggle('active');
+        }
+
+        // Квиз
+        function loadQuestion() {
+            if (currentQuestionIndex >= quizQuestions.length) {
+                showQuizResult();
+                return;
+            }
+
+            const question = quizQuestions[currentQuestionIndex];
+            const container = document.getElementById('quizContainer');
+            
+            container.innerHTML = `
+                <div class="quiz-container">
+                    <div style="text-align: center; margin-bottom: 10px; color: #8b4513;">
+                        Вопрос ${currentQuestionIndex + 1} из ${quizQuestions.length}
+                    </div>
+                    <div class="question">${question.question}</div>
+                    ${question.options.map((option, index) => 
+                        `<div class="quiz-option" onclick="selectAnswer(this, ${index === question.correct})">${option}</div>`
+                    ).join('')}
+                </div>
             `;
-            
-            updateProgress();
         }
 
-        function finalAnswer(element, isCorrect) {
-            totalQuestions++;
-            
+        function selectAnswer(element, isCorrect) {
+            // Отключить все опции
+            const options = element.parentNode.querySelectorAll('.quiz-option');
+            options.forEach(option => {
+                option.classList.add('disabled');
+                option.onclick = null;
+            });
+
+            // Показать правильный/неправильный ответ
             if (isCorrect) {
                 element.classList.add('correct');
-                correctAnswers++;
+                quizScore++;
             } else {
                 element.classList.add('incorrect');
+                // Показать правильный ответ
+                const correctIndex = quizQuestions[currentQuestionIndex].correct;
+                options[correctIndex].classList.add('correct');
             }
-            
-            // Отключаем опции и показываем результат
-            const options = document.getElementById('finalOptions').querySelectorAll('.quiz-option');
-            options.forEach(option => option.style.pointerEvents = 'none');
-            
+
+            // Переход к следующему вопросу
+            currentQuestionIndex++;
             setTimeout(() => {
-                document.getElementById('finalQuiz').classList.add('hidden');
-                document.getElementById('finalResult').classList.remove('hidden');
-                
-                score = Math.round((correctAnswers / totalQuestions) * 100);
-                document.getElementById('scoreDisplay').textContent = score;
-                
-                updateProgress();
+                loadQuestion();
             }, 2000);
         }
 
-        function restartWorkbook() {
-            progress = 0;
-            score = 0;
-            totalQuestions = 0;
-            correctAnswers = 0;
+        function showQuizResult() {
+            document.getElementById('quizContainer').classList.add('hidden');
+            document.getElementById('quizResult').classList.remove('hidden');
             
-            document.getElementById('progressBar').style.width = '0%';
-            document.getElementById('finalQuiz').classList.remove('hidden');
-            document.getElementById('finalResult').classList.add('hidden');
-            document.getElementById('symbolInfo').classList.add('hidden');
+            const percentage = Math.round((quizScore / quizQuestions.length) * 100);
+            document.getElementById('finalScore').textContent = `${quizScore}/${quizQuestions.length} (${percentage}%)`;
             
-            // Сброс всех квизов
-            const quizOptions = document.querySelectorAll('.quiz-option');
-            quizOptions.forEach(option => {
-                option.classList.remove('correct', 'incorrect');
-                option.style.pointerEvents = 'auto';
-            });
+            let comment = '';
+            if (percentage >= 80) comment = '🏆 Отлично! Вы прекрасно знаете тему!';
+            else if (percentage >= 60) comment = '👏 Хорошо! Но можно ещё подучить.';
+            else comment = '📚 Рекомендуем повторить материал.';
             
-            closePyramidInfo();
+            document.getElementById('scoreComment').textContent = comment;
         }
 
-        // Автоматическое закрытие карточки при клике вне её
-        document.addEventListener('click', function(e) {
-            const pyramidInfo = document.getElementById('pyramidInfo');
-            if (!pyramidInfo.contains(e.target) && !e.target.classList.contains('pyramid-level')) {
-                closePyramidInfo();
-            }
-        });
+        function restartQuiz() {
+            currentQuestionIndex = 0;
+            quizScore = 0;
+            document.getElementById('quizContainer').classList.remove('hidden');
+            document.getElementById('quizResult').classList.add('hidden');
+            loadQuestion();
+        }
 
         // Инициализация
         window.onload = function() {
-            console.log("Воркбук 'Общество Древнего Египта' загружен!");
+            initDragAndDrop();
+            loadQuestion();
+            updateProgress();
+            console.log("Мобильный воркбук 'Общество Древнего Египта' загружен!");
         };
     </script>
 </body>
